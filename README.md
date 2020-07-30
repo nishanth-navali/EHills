@@ -1,4 +1,3 @@
-Project 7, Chat program
 To download this repo run the following command or use the git features of your IDE.
 
 git clone <url of repo>
