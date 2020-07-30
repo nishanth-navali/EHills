@@ -1,6 +1,6 @@
 To download this repo run the following command or use the git features of your IDE.
 
-git clone <url of repo>
+git clone url_of_repo
 
     Commit as often as possible
     Write useful commit messages
