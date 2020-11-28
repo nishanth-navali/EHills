@@ -28,14 +28,17 @@ public class Client {
     Socket socket;
     Customer customer;
     ArrayList<Item> itemsDs;
+    ClientGUI clientGUI;
     private Boolean login = null;
 
-    public Client(String name, Socket socket, ObjectOutputStream toServer, ObjectInputStream fromServer) {
+
+    public Client(String name, Socket socket, ObjectOutputStream toServer, ObjectInputStream fromServer, ClientGUI clientGUI) {
         customer = new Customer(name);
         this.socket = socket;
         this.writer = toServer;
         this.reader = fromServer;
         itemsDs = new ArrayList<Item>();
+        this.clientGUI = clientGUI;
     }
 
 
@@ -99,7 +102,16 @@ public class Client {
     }
 
     public void updateItems(ArrayList<Item> fromServer) {
-        itemsDs = fromServer;
+        if(itemsDs.size() == 0) {
+            itemsDs = fromServer;
+        }
+        else {
+            for(int i = 0; i < itemsDs.size(); i++) {
+                itemsDs.get(i).update(fromServer.get(i));
+            }
+
+            clientGUI.updateItems();
+        }
     }
 
     public void sendLogin(Login login) {
@@ -113,7 +125,40 @@ public class Client {
 
     }
 
+    public void sendItems() throws IOException {
+        System.out.println("To server: " + itemsDs);
+        writer.writeObject(itemsDs);
+        writer.flush();
+        writer.reset();
+    }
+
     public void resetLogin() {
         login = null;
+    }
+
+    public String processBid(String text, Item item) {
+        if(item.isSold()) {
+            return "Unsuccessful bid: Item is already sold";
+        }
+        try {
+            double bidValue = Double.parseDouble(text.replaceAll("[$]", ""));
+            if(bidValue <= item.getCurrentPrice()) {
+                return "Unsuccessful bid: Proposed bid value is not greater than the current highest bid";
+            }
+            else if(bidValue >= item.getBuyNow()) {
+                return "Unsuccessful bid: Proposed bid value is not less than buy now price";
+            }
+            else {
+                item.setName(getName());
+                item.setCurrentPrice(bidValue);
+                this.sendItems();
+                return "Successful bid: " +  text + " on " + item.getName();
+            }
+        }
+        catch (NumberFormatException e) {
+            return "Unsuccessful bid: Unrecognized number format";
+        } catch (IOException e) {
+            return "Unsuccessful bid: Unable to send items back to server";
+        }
     }
 }

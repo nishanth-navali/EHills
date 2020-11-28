@@ -34,7 +34,8 @@ public class ClientGUI extends Application {
 
 	// JavaFX
 	Scene itemsScene;
-	HashMap<Item, TextField> timerCountdown = new HashMap<Item, TextField>();
+	HashMap<Item, Tab> itemsToGUI = new HashMap<Item, Tab>();
+	ArrayList<ItemGUI> itemsDisplay = new ArrayList<ItemGUI>();
 
 	// Decimal formatter
 	DecimalFormat df = new DecimalFormat("0.00");
@@ -50,7 +51,7 @@ public class ClientGUI extends Application {
 			fromServer = new ObjectInputStream(socket.getInputStream());
 			System.out.println("Networking established");
 
-			client = new Client("", socket, toServer, fromServer);
+			client = new Client("", socket, toServer, fromServer, this);
 
 			Thread readerThread = new Thread(new IncomingReader(fromServer, client)); // see Canvas's Chat for IncomingReader class
 			readerThread.start();
@@ -209,41 +210,12 @@ public class ClientGUI extends Application {
 
 		for(Item currentItem : client.getItemsDs()) {
 			System.out.println(currentItem);
-			GridPane currentItemPane = new GridPane();
+			ItemGUI currentItemGUI = new ItemGUI(currentItem, this.client);
+			GridPane currentItemPane = currentItemGUI.init();
 			Tab currentTab = new Tab(currentItem.getName());
 			currentTab.setContent(currentItemPane);
 			currentTab.setClosable(false);
-
-			Label itemInformationTab = new Label("Item Information:");
-			Label itemTabLabel = new Label("Name: " + currentItem.getName());
-			Label startPrice = new Label("Starting Price: " + df.format(currentItem.getMinimumBid()));
-			Label buyNowPrice = new Label("Buy Now Price: " +  df.format(currentItem.getBuyNow()));
-			Label separator = new Label("------------------------------------------------------------");
-			Label currentInformationTab = new Label("Current Information:");
-			Label mostRecentBidder = new Label("Highest Bidder: ");
-			TextField highestBidder = new TextField(currentItem.getHighestBidder());
-			highestBidder.setEditable(false);
-			Label currentPriceLabel = new Label("Current Bid: ");
-			TextField currentPrice = new TextField(df.format(currentItem.getCurrentPrice()));
-			highestBidder.setEditable(false);
-			Label timerLabel = new Label("Time left: ");
-			TextField timerCounter = new TextField("" + currentItem.getTimeLeft() + "s");
-
-			currentItemPane.add(itemInformationTab, 0, 0, 1, 1);
-			currentItemPane.add(itemTabLabel, 0, 1, 3, 1);
-			currentItemPane.add(startPrice, 0, 2, 3, 1);
-			currentItemPane.add(buyNowPrice, 0, 3, 3, 1);
-
-			currentItemPane.add(separator, 0, 4, 3, 1);
-
-			currentItemPane.add(currentInformationTab, 0, 5, 1, 1);
-			currentItemPane.add(timerLabel, 0, 6, 1, 1);
-			currentItemPane.add(timerCounter, 1, 6, 2, 1);
-			currentItemPane.add(mostRecentBidder, 0, 7, 1, 1);
-			currentItemPane.add(highestBidder, 1, 7, 2, 1);
-			currentItemPane.add(currentPriceLabel, 0, 8, 1, 1);
-			currentItemPane.add(currentPrice, 1, 8, 2, 1);
-
+			itemsDisplay.add(currentItemGUI);
 			tabPane.getTabs().add(currentTab);
 		}
 	}
@@ -257,4 +229,11 @@ public class ClientGUI extends Application {
 		launch(args);
 	}
 
+
+	// TODO: synchronize to client updater
+	public void updateItems() {
+		for(ItemGUI itemGUI : itemsDisplay) {
+			itemGUI.updateLatestItemInformation();
+		}
+	}
 }

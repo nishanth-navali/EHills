@@ -89,4 +89,15 @@ public class Item implements Serializable {
     public void setHighestBidder(String highestBidder) {
         this.highestBidder = highestBidder;
     }
+
+    public boolean isSold() {
+        return sold;
+    }
+
+    public void update(Item item) {
+        this.highestBidder = item.getHighestBidder();
+        this.currentPrice = item.getCurrentPrice();
+        this.timeLeft = item.getTimeLeft();
+        this.sold = item.isSold();
+    }
 }
