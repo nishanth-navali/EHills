@@ -1,18 +1,39 @@
+/*
+ * EE422C Final Project submission by
+ * Nishanth Navali
+ * nan686
+ * 16160
+ * Fall 2020
+ * Slip days used: 1
+ */
+
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Item implements Serializable {
     private static final long serialVersionUID = -72947298263569244L;
-    String name;
-    double currentPrice;
-    double minimumBid;
-    double buyNow;
-    boolean sold;
-    double timeLeft;
-    String highestBidder;
 
+    // Item name
+    private String name;
 
+    // Current bid price
+    private double currentPrice;
 
+    // Starting bid price
+    private double minimumBid;
+
+    // Buy Now price
+    private double buyNow;
+
+    // Boolean to check if item has been sold or not
+    private boolean sold;
+
+    // Timer
+    private double timeLeft;
+
+    // Name of the highest bidder
+    private String highestBidder;
+
+    // CONSTRUCTOR
     public Item(String name, double minimumBid, double buyNow, double timeLeft) {
         this.name = name;
         this.currentPrice = minimumBid;
@@ -23,6 +44,11 @@ public class Item implements Serializable {
         highestBidder = "NA";
     }
 
+    /**
+     * toString for console debugging
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return "Item{" +
@@ -36,11 +62,22 @@ public class Item implements Serializable {
                 '}';
     }
 
+    // Server initialization called after GSON parsing
     public void init() {
         this.currentPrice = this.minimumBid;
         this.sold = false;
         this.highestBidder = "NA";
     }
+
+    // Client update item without changing reference
+    public void update(Item item) {
+        this.highestBidder = item.getHighestBidder();
+        this.currentPrice = item.getCurrentPrice();
+        this.timeLeft = item.getTimeLeft();
+        this.sold = item.isSold();
+    }
+
+    // Assorted getters/setters
 
     public String getName() {
         return name;
@@ -92,13 +129,6 @@ public class Item implements Serializable {
 
     public boolean isSold() {
         return sold;
-    }
-
-    public void update(Item item) {
-        this.highestBidder = item.getHighestBidder();
-        this.currentPrice = item.getCurrentPrice();
-        this.timeLeft = item.getTimeLeft();
-        this.sold = item.isSold();
     }
 
     public void setSold() {
