@@ -6,12 +6,12 @@
  * Fall 2020
  */
 
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Observable;
+
 import com.google.gson.Gson;
 
 public class Server extends Observable {
@@ -19,7 +19,7 @@ public class Server extends Observable {
     private ArrayList<Item> itemsDs;
     private ArrayList<Login> loginsDs;
 
-    public static void main (String [] args) {
+    public static void main(String[] args) {
         Server server = new Server();
         server.populateItems();
         server.populateLogins();
@@ -31,7 +31,7 @@ public class Server extends Observable {
         Gson gson = new Gson();
         File directoryPath = new File("users");
         String[] filenames = directoryPath.list();
-        for(int i = 0; i < filenames.length; i++) {
+        for (int i = 0; i < filenames.length; i++) {
             String filename = "users/" + filenames[i];
             try (Reader reader = new FileReader(filename)) {
                 Login login = gson.fromJson(reader, Login.class);
@@ -49,7 +49,7 @@ public class Server extends Observable {
         Gson gson = new Gson();
         File directoryPath = new File("items");
         String[] filenames = directoryPath.list();
-        for(int i = 0; i < filenames.length; i++) {
+        for (int i = 0; i < filenames.length; i++) {
             String filename = "items/" + filenames[i];
             try (Reader reader = new FileReader(filename)) {
                 Item newItem = gson.fromJson(reader, Item.class);
@@ -77,7 +77,9 @@ public class Server extends Observable {
                 addObserver(writer);
                 System.out.println("Got a connection");
             }
-        } catch (IOException e) {}
+        } catch (IOException e) {
+            System.out.println("Unable to set up networking");
+        }
     }
 
     public synchronized void processRequest(ArrayList<Item> obj) {
@@ -90,7 +92,9 @@ public class Server extends Observable {
         return itemsDs;
     }
 
-    public ArrayList<Login> getLogins() {return loginsDs;}
+    public ArrayList<Login> getLogins() {
+        return loginsDs;
+    }
 
     public void setItemsDs(ArrayList<Item> itemsDs) {
         this.itemsDs = itemsDs;
