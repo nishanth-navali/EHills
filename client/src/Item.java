@@ -100,4 +100,8 @@ public class Item implements Serializable {
         this.timeLeft = item.getTimeLeft();
         this.sold = item.isSold();
     }
+
+    public void setSold() {
+        this.sold = true;
+    }
 }

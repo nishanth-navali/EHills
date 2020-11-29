@@ -81,7 +81,7 @@ public class Server extends Observable {
     }
 
     public synchronized void processRequest(ArrayList<Item> obj) {
-        System.out.println(this.itemsDs); // testing
+        itemsDs = obj;
         this.setChanged();
         this.notifyObservers(this.itemsDs);
     }

@@ -20,7 +20,7 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        synchronized (server) {
+        synchronized (this) {
             Object obj;
             try {
                 while(true) {

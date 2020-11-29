@@ -17,6 +17,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.net.Socket;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -26,54 +27,21 @@ public class Client {
     ObjectInputStream reader;
     ObjectOutputStream writer;
     Socket socket;
-    Customer customer;
+    String customerName = "Unknown Customer";
     ArrayList<Item> itemsDs;
     ClientGUI clientGUI;
     private Boolean login = null;
 
+    static DecimalFormat df = new DecimalFormat("0.00");
+
 
     public Client(String name, Socket socket, ObjectOutputStream toServer, ObjectInputStream fromServer, ClientGUI clientGUI) {
-        customer = new Customer(name);
         this.socket = socket;
         this.writer = toServer;
         this.reader = fromServer;
         itemsDs = new ArrayList<Item>();
         this.clientGUI = clientGUI;
     }
-
-
-//    @Override
-//    public void start(Stage primaryStage) throws Exception{
-////        FXMLLoader fxmlLoader = new FXMLLoader();
-////        Parent root = fxmlLoader.load(getClass().getResource("client.fxml").openStream());
-////        controller = fxmlLoader.getController();
-////        primaryStage.setTitle("Customer");
-////        primaryStage.setScene(new Scene(root, 700, 600));
-////        primaryStage.show();
-////        controller.myClient = this;
-//
-////        connectToServer();
-//        writer.writeObject(new String("Bill"));
-//        writer.flush();
-//        writer.reset();
-//        writer.writeObject(new Item("Ball", 10, 50, 100));
-//        writer.flush();
-//        writer.reset();
-////        socket.close();
-//    }
-
-//    void connectToServer () {
-//        int port = 5000;
-//        try {
-//            socket = new Socket("localhost", port);
-//            writer = new ObjectOutputStream(socket.getOutputStream());
-//            reader = new ObjectInputStream(socket.getInputStream());
-//            System.out.println("networking established");
-//            Thread readerThread = new Thread(new IncomingReader(reader)); // see Canvas's Chat for IncomingReader class
-//            readerThread.start();
-//
-//        } catch (IOException e) {}
-//    }
 
     ObjectOutputStream getObjectOutputStream() {return writer;}
 
@@ -86,7 +54,7 @@ public class Client {
     }
 
     public void setName(String name) {
-        customer.setName(name);
+        this.customerName = name;
     }
 
     public Boolean checkLogin() {
@@ -98,7 +66,7 @@ public class Client {
     }
 
     public String getName() {
-        return customer.name;
+        return this.customerName;
     }
 
     public void updateItems(ArrayList<Item> fromServer) {
@@ -149,7 +117,7 @@ public class Client {
                 return "Unsuccessful bid: Proposed bid value is not less than buy now price";
             }
             else {
-                item.setName(getName());
+                item.setHighestBidder(this.customerName);
                 item.setCurrentPrice(bidValue);
                 this.sendItems();
                 return "Successful bid: " +  text + " on " + item.getName();
@@ -159,6 +127,23 @@ public class Client {
             return "Unsuccessful bid: Unrecognized number format";
         } catch (IOException e) {
             return "Unsuccessful bid: Unable to send items back to server";
+        }
+    }
+
+    public String processBuyNow(Item item) {
+        if(item.isSold()) {
+            return "Unsuccessful buy now: Item is already sold";
+        }
+        try {
+                item.setHighestBidder(this.customerName);
+                item.setCurrentPrice(item.getBuyNow());
+                item.setSold();
+                this.sendItems();
+                return "Successful purchase: $" +  df.format(item.getBuyNow()) + " on " + item.getName();
+
+        }
+        catch (IOException e) {
+            return "Unsuccessful buy now: Unable to send items back to server";
         }
     }
 }

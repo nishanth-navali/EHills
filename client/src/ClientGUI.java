@@ -143,7 +143,7 @@ public class ClientGUI extends Application {
 				client.sendLogin(new Login("Guest", ""));
 				if(checkLogin()) {
 					loginTextArea.setText("Login Successful!");
-					client.setName(usernameTextField.getText());
+					client.setName("Guest");
 					startClient(primaryStage);
 					itemTabsInit(itemsPane);
 				}
@@ -168,16 +168,6 @@ public class ClientGUI extends Application {
 				System.exit(0);
 			}
 		});
-
-		// timer setup
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-
-			}
-		});
-
-
 	}
 
 	private boolean checkLogin() {

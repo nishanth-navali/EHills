@@ -17,6 +17,10 @@ public class ItemGUI {
     TextField highestBidder;
     TextField currentPrice;
     TextField timerCounter;
+    TextField bidValue;
+
+    Button bid;
+    Button buyNow;
 
     public ItemGUI(Item currentItem, Client client) {
         this.item = currentItem;
@@ -48,9 +52,9 @@ public class ItemGUI {
 
         Label separator2 = new Label("------------------------------------------------------------");
         Label customerActionTab = new Label("Customer Action:");
-        Button bid = new Button("Bid");
-        Button buyNow = new Button("Buy Now: $" +  df.format(item.getBuyNow()));
-        TextField bidValue = new TextField("$" + df.format(item.getCurrentPrice() + 0.01));
+        bid = new Button("Bid");
+        buyNow = new Button("Buy Now: $" +  df.format(item.getBuyNow()));
+        bidValue = new TextField("$" + df.format(item.getCurrentPrice() + 0.01));
 
         Button exit = new Button("Exit");
 
@@ -71,7 +75,14 @@ public class ItemGUI {
         buyNow.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.exit(0);
+                String output = client.processBuyNow(item);
+                Stage buyOutputStage = new Stage();
+                buyOutputStage.setX(500);
+                buyOutputStage.setY(500);
+                BorderPane bidBP = new BorderPane();
+                bidBP.setCenter(new Label(output));
+                buyOutputStage.setScene(new Scene(bidBP, 200, 200));
+                buyOutputStage.show();
             }
         });
 
@@ -113,5 +124,11 @@ public class ItemGUI {
         highestBidder.setText(item.getHighestBidder());
         currentPrice.setText("$" + df.format(item.getCurrentPrice()));
         timerCounter.setText("" + item.getTimeLeft() + "s");
+        bidValue.setText("$" + df.format(item.getCurrentPrice() + 0.01));
+        if(item.isSold()) {
+            bid.setDisable(true);
+            buyNow.setDisable(true);
+            bidValue.clear();
+        }
     }
 }
