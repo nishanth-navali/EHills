@@ -8,10 +8,9 @@
  */
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -59,17 +58,15 @@ public class ClientGUI extends Application {
             // create new client and pass all information to it
             client = new Client("", socket, toServer, fromServer, this);
 
-            // new Thread checking for inputs
-            Thread readerThread = new Thread(new IncomingReader(fromServer, client));
-            readerThread.start();
-
         } catch (IOException e) {
-            System.out.println("Networking not established: check server status");
+            System.out.println("Networking not established: check server status. Please restart");
+            System.exit(0);
         }
 
         // ITEMS VIEW: load up items GUIs
         TabPane itemsPane = new TabPane();
-        itemsScene = new Scene(itemsPane, 350, 450);
+        itemsScene = new Scene(itemsPane, 360, 450);
+        itemsScene.getStylesheets().add("stylesheet/styles.css");
         itemTabsInit(itemsPane);
 
         // LOGIN VIEW: create GUI specifically for logging in with U/P or as guest
@@ -79,9 +76,11 @@ public class ClientGUI extends Application {
         loginPane.setVgap(10);
 
         // Create a scene and place it in the stage
-        Scene loginScene = new Scene(loginPane, 300, 190);
+        Scene loginScene = new Scene(loginPane, 340, 200);
+        loginScene.getStylesheets().add("stylesheet/styles.css");
         primaryStage.setTitle("Login to EHills"); // Set the stage title
         primaryStage.setScene(loginScene); // Place the scene in the stage
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("images/hills.png")));
         primaryStage.show(); // Display the stage
 
         // Username elements
@@ -179,13 +178,14 @@ public class ClientGUI extends Application {
      * @return true if login was valid, else false
      */
     private boolean checkLogin() {
-        while (true) {
-            if (client.checkLogin() != null) {
-                boolean l = client.checkLogin();
-                client.resetLogin();
-                return l;
-            }
-        }
+        boolean loginStatus;
+        System.out.println("checking login");
+        while (!client.isLoginUpdated());
+        System.out.println("login updated");
+        loginStatus = client.checkLogin();
+        client.resetLogin();
+        System.out.println("sending login status: " + loginStatus);
+        return loginStatus;
     }
 
     /**
@@ -202,12 +202,12 @@ public class ClientGUI extends Application {
         TextArea welcomeText = new TextArea();
         welcomeText.setEditable(false);
         welcomeText.setVisible(true);
-        welcomeText.setPrefWidth(400);
+        welcomeText.setPrefWidth(200);
         welcomeText.setText("Welcome to EHills!\n" +
-                "As a customer, you can bid on items to buy them.\n" +
-                "Each item has a buy now price which marks the price you can stop bidding.\n" +
-                "Keep track of the timer! When the timer hits 0, the item is sold!\n" +
-                "A bid in the last 20 seconds will reset the timer back to 20 seconds.\n" +
+                "As a customer, you can bid on items to \nbuy them. " +
+                "Each item has a buy now price \nwhich marks the price you can stop \nbidding. " +
+                "Also, keep track of the timer! \nWhen the timer hits 0, the item is sold!\n" +
+                "A bid in the last 20 seconds will reset \nthe timer back to 20 seconds.\n" +
                 "Happy bidding!");
         welcomePane.setTop(welcomeText);
         welcome.setContent(welcomePane);
@@ -216,6 +216,7 @@ public class ClientGUI extends Application {
         // loop through ArrayList of items to initialize a tab for each
         for (Item currentItem : client.getItemsDs()) {
             System.out.println(currentItem);
+            currentItem.startTimer();
             ItemGUI currentItemGUI = new ItemGUI(currentItem, this.client);
             GridPane currentItemPane = currentItemGUI.init();
             Tab currentTab = new Tab(currentItem.getName());

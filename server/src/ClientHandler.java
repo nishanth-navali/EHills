@@ -33,10 +33,10 @@ public class ClientHandler implements Runnable {
                                     send = true;
                                 }
                             }
+                            writer.update(server, new Boolean(send));
                             if(send) {
                                 writer.update(server, server.getItemsDs());
                             }
-                            writer.update(server, new Boolean(send));
                         }
                         else if(obj instanceof ArrayList<?> && ((ArrayList<?>) obj).get(0) instanceof Item) {
                             server.processRequest((ArrayList<Item>) obj);
@@ -45,6 +45,7 @@ public class ClientHandler implements Runnable {
                 }
             } catch (SocketException e) {
                 System.out.println("Client has been disconnected");
+                server.removeObserver(writer);
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

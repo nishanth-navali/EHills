@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Observer;
 
 import com.google.gson.Gson;
 
@@ -54,10 +55,12 @@ public class Server extends Observable {
             try (Reader reader = new FileReader(filename)) {
                 Item newItem = gson.fromJson(reader, Item.class);
                 newItem.init();
+                newItem.startTimer();
                 itemsDs.add(newItem);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
         System.out.println(itemsDs);
     }
@@ -75,6 +78,7 @@ public class Server extends Observable {
                 Thread t = new Thread(new ClientHandler(this, clientSocket, writer, ois));
                 t.start();
                 addObserver(writer);
+                writer.update(this, "Hi! Welcome to EHills!");
                 System.out.println("Got a connection");
             }
         } catch (IOException e) {
@@ -98,5 +102,9 @@ public class Server extends Observable {
 
     public void setItemsDs(ArrayList<Item> itemsDs) {
         this.itemsDs = itemsDs;
+    }
+
+    public void removeObserver(Observer writer) {
+        this.deleteObserver(writer);
     }
 }

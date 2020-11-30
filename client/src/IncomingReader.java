@@ -42,8 +42,10 @@ public class IncomingReader implements Runnable {
                     client.updateItems((ArrayList<Item>) fromServer);
                 }
             }
-        } catch (IOException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Disconnected from server");
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Input cannot be mapped to a class");
         }
     }
 }

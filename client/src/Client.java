@@ -33,6 +33,8 @@ public class Client {
     // Login boolean object to check
     private Boolean login = null;
 
+    private boolean loginUpdated = false;
+
     // decimal formatter
     static DecimalFormat df = new DecimalFormat("0.00");
 
@@ -43,6 +45,9 @@ public class Client {
         this.reader = fromServer;
         itemsDs = new ArrayList<Item>();
         this.clientGUI = clientGUI;
+        // new Thread checking for inputs
+        Thread readerThread = new Thread(new IncomingReader(fromServer,  this));
+        readerThread.start();
     }
 
     // Assorted getters/setters
@@ -59,8 +64,14 @@ public class Client {
         return login;
     }
 
+    public boolean isLoginUpdated() {
+        return loginUpdated;
+    }
+
     public void setLogin(Boolean fromServer) {
         this.login = fromServer;
+        loginUpdated = true;
+        System.out.println("Login set to: " + login + " and login updated set to: " + loginUpdated);
     }
 
     public String getName() {
@@ -120,6 +131,7 @@ public class Client {
      */
     public void resetLogin() {
         login = null;
+        loginUpdated = false;
     }
 
     /**
@@ -144,6 +156,9 @@ public class Client {
                 // valid bid, send to client
                 item.setHighestBidder(this.customerName);
                 item.setCurrentPrice(bidValue);
+                if(item.getTimeLeft() < 20) {
+                    item.setTimeLeft(20);
+                }
                 this.sendItems();
                 return "Successful bid: " + text + " on " + item.getName();
             }

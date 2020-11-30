@@ -8,6 +8,8 @@
  */
 
 import java.io.Serializable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Item implements Serializable {
     private static final long serialVersionUID = -72947298263569244L;
@@ -28,13 +30,13 @@ public class Item implements Serializable {
     private boolean sold;
 
     // Timer
-    private double timeLeft;
+    private Integer timeLeft;
 
     // Name of the highest bidder
     private String highestBidder;
 
     // CONSTRUCTOR
-    public Item(String name, double minimumBid, double buyNow, double timeLeft) {
+    public Item(String name, double minimumBid, double buyNow, int timeLeft) {
         this.name = name;
         this.currentPrice = minimumBid;
         this.minimumBid = minimumBid;
@@ -67,6 +69,21 @@ public class Item implements Serializable {
         this.currentPrice = this.minimumBid;
         this.sold = false;
         this.highestBidder = "NA";
+    }
+
+    public void startTimer() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if(timeLeft > 0) {
+                    timeLeft--;
+                }
+                else {
+                    setSold();
+                }
+            }
+        }, 1000, 1000);
     }
 
     // Client update item without changing reference
@@ -111,11 +128,11 @@ public class Item implements Serializable {
         this.buyNow = buyNow;
     }
 
-    public double getTimeLeft() {
+    public Integer getTimeLeft() {
         return timeLeft;
     }
 
-    public void setTimeLeft(double timeLeft) {
+    public void setTimeLeft( int timeLeft) {
         this.timeLeft = timeLeft;
     }
 

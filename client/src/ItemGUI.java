@@ -7,10 +7,14 @@
  * Slip days used: 1
  */
 
+import javafx.animation.AnimationTimer;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -51,12 +55,12 @@ public class ItemGUI {
      */
     public GridPane init() {
         GridPane currentItemPane = new GridPane();
-
+        currentItemPane.setHgap(10);
         Label itemInformationTab = new Label("Item Information:");
         Label itemTabLabel = new Label("Name: " + item.getName());
         Label startPrice = new Label("Starting Price: $" + df.format(item.getMinimumBid()));
         Label buyNowPrice = new Label("Buy Now Price: $" + df.format(item.getBuyNow()));
-        Label separator = new Label("----------------------------------------------------");
+        Label separator = new Label("------------------------------------");
         Label currentInformationTab = new Label("Current Information:");
 
         Label mostRecentBidder = new Label("Highest Bidder: ");
@@ -64,14 +68,35 @@ public class ItemGUI {
         highestBidder.setEditable(false);
 
         Label currentPriceLabel = new Label("Current Bid: ");
-        currentPrice = new TextField("$" + df.format(item.getCurrentPrice()));
-        highestBidder.setEditable(false);
+        currentPrice = new TextField("$NA");
+        if(item.getCurrentPrice() >= item.getMinimumBid()) {
+            currentPrice.setText("$" + df.format(item.getCurrentPrice()));
+        }
+        currentPrice.setEditable(false);
 
         Label timerLabel = new Label("Time left: ");
         timerCounter = new TextField("" + item.getTimeLeft() + "s");
         timerCounter.setEditable(false);
 
-        Label separator2 = new Label("----------------------------------------------------");
+        // timer animation countdown
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (!item.isSold()) {
+                    timerCounter.setText("" + item.getTimeLeft() + "s");
+                } else {
+                    timerCounter.setText("Item is sold!");
+
+                    // if sold, then disable all buttons and clear bid field
+                    bid.setDisable(true);
+                    buyNow.setDisable(true);
+                    bidValue.clear();
+
+                }
+            }
+        }.start();
+
+        Label separator2 = new Label("------------------------------------");
         Label customerActionTab = new Label("Customer Action:");
         bid = new Button("Bid");
         buyNow = new Button("Buy Now: $" + df.format(item.getBuyNow()));
@@ -82,22 +107,26 @@ public class ItemGUI {
         bid.setOnAction(event -> {
             String output = client.processBid(bidValue.getText(), item);
             Stage bidOutputStage = new Stage();
+            bidOutputStage.getIcons().add(new Image(getClass().getResourceAsStream("images/hills.png")));
             bidOutputStage.setX(500);
             bidOutputStage.setY(500);
             BorderPane bidBP = new BorderPane();
             bidBP.setCenter(new Label(output));
-            bidOutputStage.setScene(new Scene(bidBP, 200, 200));
+            bidOutputStage.setScene(new Scene(bidBP, 300, 75));
+            bidOutputStage.getScene().getStylesheets().add("stylesheet/styles.css");
             bidOutputStage.show();
         });
 
         buyNow.setOnAction(event -> {
             String output = client.processBuyNow(item);
             Stage buyOutputStage = new Stage();
+            buyOutputStage.getIcons().add(new Image(getClass().getResourceAsStream("images/hills.png")));
             buyOutputStage.setX(500);
             buyOutputStage.setY(500);
-            BorderPane bidBP = new BorderPane();
-            bidBP.setCenter(new Label(output));
-            buyOutputStage.setScene(new Scene(bidBP, 200, 200));
+            BorderPane buyBP = new BorderPane();
+            buyBP.setCenter(new Label(output));
+            buyOutputStage.setScene(new Scene(buyBP, 300, 75));
+            buyOutputStage.getScene().getStylesheets().add("stylesheet/styles.css");
             buyOutputStage.show();
         });
 
@@ -109,7 +138,7 @@ public class ItemGUI {
         currentItemPane.add(startPrice, 0, 2, 3, 1);
         currentItemPane.add(buyNowPrice, 0, 3, 3, 1);
 
-        currentItemPane.add(separator, 0, 4, 3, 1);
+        currentItemPane.add(separator, 0, 4, 4, 1);
 
         currentItemPane.add(currentInformationTab, 0, 5, 1, 1);
         currentItemPane.add(timerLabel, 0, 6, 1, 1);
@@ -119,7 +148,7 @@ public class ItemGUI {
         currentItemPane.add(currentPriceLabel, 0, 8, 1, 1);
         currentItemPane.add(currentPrice, 1, 8, 2, 1);
 
-        currentItemPane.add(separator2, 0, 9, 3, 1);
+        currentItemPane.add(separator2, 0, 9, 4, 1);
 
         currentItemPane.add(customerActionTab, 0, 10, 1, 1);
         currentItemPane.add(bidValue, 0, 11, 2, 1);
@@ -137,14 +166,6 @@ public class ItemGUI {
         // set all of the things that will change
         highestBidder.setText(item.getHighestBidder());
         currentPrice.setText("$" + df.format(item.getCurrentPrice()));
-        timerCounter.setText("" + item.getTimeLeft() + "s");
         bidValue.setText("$" + df.format(item.getCurrentPrice() + 0.01));
-
-        // if sold, then disable all buttons and clear bid field
-        if (item.isSold()) {
-            bid.setDisable(true);
-            buyNow.setDisable(true);
-            bidValue.clear();
-        }
     }
 }

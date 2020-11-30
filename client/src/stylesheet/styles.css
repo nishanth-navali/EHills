@@ -1,0 +1,43 @@
+/*
+css for various elements in critter simulator
+ */
+
+.button {
+    -fx-background-color:#253e5e;
+    -fx-text-fill: white;
+    -fx-font-family: "Courier New";
+    -fx-font-size: 14px;
+    -fx-padding: 5 25 5 25;
+}
+
+.label {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 16;
+    -fx-text-fill: black;
+    -fx-padding: 5px;
+    -fx-font-weight: 600;
+}
+
+.text-field {
+    -fx-padding: 2px;
+    -fx-font-family: "Courier New";
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-max-height: 14px;
+}
+
+.text-area {
+    -fx-padding: 2px;
+    -fx-font-size: 14;
+    -fx-font-family: "Courier New";
+
+}
+
+.text-area .content {
+    -fx-background-color: #ffe6c4;
+}
+
+.root
+{
+    -fx-background-color: #ffe6c4;
+}

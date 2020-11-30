@@ -2,5 +2,5 @@
   "name": "Plate",
   "minimumBid": "0.01",
   "buyNow": "1.00",
-  "timeLeft": "100"
+  "timeLeft": "1000"
 }
