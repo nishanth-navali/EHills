@@ -98,7 +98,14 @@ public class ItemGUI {
         Label customerActionTab = new Label("Customer Action:");
         bid = new Button("Bid");
         buyNow = new Button("Buy Now: $" + df.format(item.getBuyNow()));
-        bidValue = new TextField("$" + df.format(item.getCurrentPrice() + 0.01));
+        bidValue = new TextField();
+        double bidVal = item.getCurrentPrice() + item.getBuyNow() / 10.0;
+        if (bidVal >= item.getBuyNow()) {
+            bidVal = item.getBuyNow() - 0.01;
+        } else if (item.getCurrentPrice() < item.getMinimumBid()) {
+            bidVal = item.getMinimumBid();
+        }
+        bidValue.setText("$" + df.format(bidVal));
 
         Button exit = new Button("Exit");
 
@@ -163,6 +170,9 @@ public class ItemGUI {
         highestBidder.setText(item.getHighestBidder());
         if (item.getCurrentPrice() >= item.getMinimumBid()) {
             currentPrice.setText("$" + df.format(item.getCurrentPrice()));
+        }
+        else {
+            currentPrice.setText("$NA");
         }
 
         double bidVal = item.getCurrentPrice() + item.getBuyNow() / 10.0;

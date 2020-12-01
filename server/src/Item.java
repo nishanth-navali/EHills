@@ -66,7 +66,7 @@ public class Item implements Serializable {
 
     // Server initialization called after GSON parsing
     public void init() {
-        this.currentPrice = this.minimumBid;
+        this.currentPrice = this.minimumBid - 0.01;
         this.sold = false;
         this.highestBidder = "NA";
     }
