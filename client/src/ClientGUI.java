@@ -144,6 +144,7 @@ public class ClientGUI extends Application {
             loginClearButton.setDisable(true);
             loginExitButton.setDisable(true);
             guestButton.setDisable(true);
+            badLogin.stop();
             // if login is successful
             if (checkLogin()) {
                 loginTextArea.setText("Login Successful!");
