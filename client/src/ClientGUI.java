@@ -169,7 +169,12 @@ public class ClientGUI extends Application {
             // just a formality
             if (checkLogin()) {
                 loginTextArea.setText("Login Successful!");
-                client.setName("Guest");
+                if (usernameTextField.getText().equals("")) {
+                    client.setName("Guest");
+                }
+                else {
+                    client.setName(usernameTextField.getText());
+                }
                 startClient(primaryStage);
                 itemTabsInit(itemsPane);
             } else {
