@@ -33,8 +33,6 @@ public class Client {
     // Login boolean object to check
     private Boolean login = null;
 
-    private boolean loginUpdated = false;
-
     // decimal formatter
     static DecimalFormat df = new DecimalFormat("0.00");
 
@@ -64,14 +62,9 @@ public class Client {
         return login;
     }
 
-    public boolean isLoginUpdated() {
-        return loginUpdated;
-    }
-
     public void setLogin(Boolean fromServer) {
         this.login = fromServer;
-        loginUpdated = true;
-        System.out.println("Login set to: " + login + " and login updated set to: " + loginUpdated);
+        System.out.println("Login set to: " + login);
     }
 
     public String getName() {
@@ -131,7 +124,6 @@ public class Client {
      */
     public void resetLogin() {
         login = null;
-        loginUpdated = false;
     }
 
     /**

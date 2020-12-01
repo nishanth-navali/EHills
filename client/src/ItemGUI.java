@@ -108,12 +108,13 @@ public class ItemGUI {
             String output = client.processBid(bidValue.getText(), item);
             Stage bidOutputStage = new Stage();
             bidOutputStage.getIcons().add(new Image(getClass().getResourceAsStream("images/hills.png")));
-            bidOutputStage.setX(500);
-            bidOutputStage.setY(500);
+//            bidOutputStage.setX(500);
+//            bidOutputStage.setY(500);
             BorderPane bidBP = new BorderPane();
             bidBP.setCenter(new Label(output));
-            bidOutputStage.setScene(new Scene(bidBP, 300, 75));
+            bidOutputStage.setScene(new Scene(bidBP, 320, 75));
             bidOutputStage.getScene().getStylesheets().add("stylesheet/styles.css");
+            bidOutputStage.setTitle("Bid Confirmation: " + client.getName());
             bidOutputStage.show();
         });
 
@@ -121,12 +122,13 @@ public class ItemGUI {
             String output = client.processBuyNow(item);
             Stage buyOutputStage = new Stage();
             buyOutputStage.getIcons().add(new Image(getClass().getResourceAsStream("images/hills.png")));
-            buyOutputStage.setX(500);
-            buyOutputStage.setY(500);
+//            buyOutputStage.setX(500);
+////            buyOutputStage.setY(500);
             BorderPane buyBP = new BorderPane();
             buyBP.setCenter(new Label(output));
-            buyOutputStage.setScene(new Scene(buyBP, 300, 75));
+            buyOutputStage.setScene(new Scene(buyBP, 320, 75));
             buyOutputStage.getScene().getStylesheets().add("stylesheet/styles.css");
+            buyOutputStage.setTitle("Buy Confirmation: " + client.getName());
             buyOutputStage.show();
         });
 

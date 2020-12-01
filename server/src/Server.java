@@ -66,10 +66,10 @@ public class Server extends Observable {
     }
 
     private void SetupNetworking() {
-        int port = 5000;
+        final   int port = 5000;
         try {
             ServerSocket ss = new ServerSocket(port);
-            System.out.println("Server started at IP:" + ss.getInetAddress());
+            System.out.println("Server started at IP:" + ss.getLocalSocketAddress());
             while (true) {
                 Socket clientSocket = ss.accept();
                 ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());
@@ -87,9 +87,23 @@ public class Server extends Observable {
     }
 
     public synchronized void processRequest(ArrayList<Item> obj) {
-        itemsDs = obj;
-        this.setChanged();
-        this.notifyObservers(this.itemsDs);
+        boolean different = false;
+        for(int i = 0; i < itemsDs.size(); i++) {
+            if(itemsDs.get(i).getCurrentPrice() <=  obj.get(i).getCurrentPrice()) {
+                different = true;
+            }
+        }
+        if(different) {
+            itemsDs = obj;
+            for(Item item : itemsDs) {
+                item.startTimer();
+            }
+            this.setChanged();
+            this.notifyObservers(this.itemsDs);
+        }
+        else {
+            System.out.println("Bid for the same price of an object was sent after another object sent, so bid was rejected");
+        }
     }
 
     public ArrayList<Item> getItemsDs() {

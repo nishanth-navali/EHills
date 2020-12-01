@@ -21,6 +21,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class ClientGUI extends Application {
 
@@ -133,7 +134,10 @@ public class ClientGUI extends Application {
         loginButton.setOnAction(event -> {
             // send to server
             client.sendLogin(new Login(usernameTextField.getText(), passwordTextField.getText()));
-
+            loginButton.setDisable(true);
+            loginClearButton.setDisable(true);
+            loginExitButton.setDisable(true);
+            guestButton.setDisable(true);
             // if login is successful
             if (checkLogin()) {
                 loginTextArea.setText("Login Successful!");
@@ -143,6 +147,10 @@ public class ClientGUI extends Application {
             } else {
                 loginTextArea.setText("Incorrect username/password: Please try again");
             }
+            loginButton.setDisable(false);
+            loginClearButton.setDisable(false);
+            loginExitButton.setDisable(false);
+            guestButton.setDisable(false);
         });
 
         // CONTINUE AS GUEST BUTTON ACTION
@@ -178,14 +186,22 @@ public class ClientGUI extends Application {
      * @return true if login was valid, else false
      */
     private boolean checkLogin() {
-        boolean loginStatus;
-        System.out.println("checking login");
-        while (!client.isLoginUpdated());
-        System.out.println("login updated");
+        Boolean loginStatus;
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         loginStatus = client.checkLogin();
-        client.resetLogin();
-        System.out.println("sending login status: " + loginStatus);
-        return loginStatus;
+        if(loginStatus == null) {
+            System.out.println("Login not received from server");
+            return false;
+        }
+        else {
+            client.resetLogin();
+            System.out.println("sending login status: " + loginStatus);
+            return loginStatus;
+        }
     }
 
     /**
