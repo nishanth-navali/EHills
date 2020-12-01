@@ -44,7 +44,7 @@ public class Client {
         itemsDs = new ArrayList<Item>();
         this.clientGUI = clientGUI;
         // new Thread checking for inputs
-        Thread readerThread = new Thread(new IncomingReader(fromServer,  this));
+        Thread readerThread = new Thread(new IncomingReader(fromServer, this));
         readerThread.start();
     }
 
@@ -148,7 +148,7 @@ public class Client {
                 // valid bid, send to client
                 item.setHighestBidder(this.customerName);
                 item.setCurrentPrice(bidValue);
-                if(item.getTimeLeft() < 20) {
+                if (item.getTimeLeft() < 20) {
                     item.setTimeLeft(20);
                 }
                 this.sendItems();

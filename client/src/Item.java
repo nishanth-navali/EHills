@@ -76,10 +76,9 @@ public class Item implements Serializable {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if(timeLeft > 0) {
+                if (timeLeft > 0) {
                     timeLeft--;
-                }
-                else {
+                } else {
                     setSold();
                 }
             }
@@ -132,7 +131,7 @@ public class Item implements Serializable {
         return timeLeft;
     }
 
-    public void setTimeLeft( int timeLeft) {
+    public void setTimeLeft(int timeLeft) {
         this.timeLeft = timeLeft;
     }
 

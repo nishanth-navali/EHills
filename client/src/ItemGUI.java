@@ -7,9 +7,7 @@
  * Slip days used: 1
  */
 
-import javafx.animation.AnimationTimer;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.animation.AnimationTimer;;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -69,7 +67,7 @@ public class ItemGUI {
 
         Label currentPriceLabel = new Label("Current Bid: ");
         currentPrice = new TextField("$NA");
-        if(item.getCurrentPrice() >= item.getMinimumBid()) {
+        if (item.getCurrentPrice() >= item.getMinimumBid()) {
             currentPrice.setText("$" + df.format(item.getCurrentPrice()));
         }
         currentPrice.setEditable(false);
@@ -163,16 +161,14 @@ public class ItemGUI {
     public synchronized void updateLatestItemInformation() {
         // set all of the things that will change
         highestBidder.setText(item.getHighestBidder());
-        if(item.getCurrentPrice() >= item.getMinimumBid()) {
+        if (item.getCurrentPrice() >= item.getMinimumBid()) {
             currentPrice.setText("$" + df.format(item.getCurrentPrice()));
         }
 
-        double bidVal = item.getCurrentPrice() + item.getBuyNow()/10.0;
-        if(bidVal >= item.getBuyNow()) {
+        double bidVal = item.getCurrentPrice() + item.getBuyNow() / 10.0;
+        if (bidVal >= item.getBuyNow()) {
             bidVal = item.getBuyNow() - 0.01;
-        }
-        else if(item.getCurrentPrice() < item.getMinimumBid())
-        {
+        } else if (item.getCurrentPrice() < item.getMinimumBid()) {
             bidVal = item.getMinimumBid();
         }
         bidValue.setText("$" + df.format(bidVal));

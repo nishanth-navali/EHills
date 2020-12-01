@@ -53,7 +53,7 @@ public class ClientGUI extends Application {
         int port = 5000;
         try {
             // connect via Socket
-            socket = new Socket("54.86.146.46", port);
+            socket = new Socket(IP_Address, port);
 
             // initialize Object I/O streams
             toServer = new ObjectOutputStream(socket.getOutputStream());
@@ -200,11 +200,10 @@ public class ClientGUI extends Application {
             e.printStackTrace();
         }
         loginStatus = client.checkLogin();
-        if(loginStatus == null) {
+        if (loginStatus == null) {
             System.out.println("Login not received from server");
             return false;
-        }
-        else {
+        } else {
             client.resetLogin();
             System.out.println("sending login status: " + loginStatus);
             return loginStatus;
@@ -272,7 +271,7 @@ public class ClientGUI extends Application {
 
     // main
     public static void main(String[] args) {
-        if(args.length != 0) {
+        if (args.length != 0) {
             ClientGUI.IP_Address = args[0];
         }
         launch(args);

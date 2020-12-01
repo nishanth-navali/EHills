@@ -4,6 +4,7 @@
  * nan686
  * 16160
  * Fall 2020
+ * Slip days used: 1
  */
 
 import java.io.*;
@@ -18,6 +19,7 @@ import com.google.gson.Gson;
 
 public class Server extends Observable {
 
+    // Data structures to hold items/logins on initialization
     private ArrayList<Item> itemsDs;
     private ArrayList<Login> loginsDs;
 
@@ -28,6 +30,9 @@ public class Server extends Observable {
         server.SetupNetworking();
     }
 
+    /**
+     * Initialize possible valid logins from JSON
+     */
     private void populateLogins() {
         loginsDs = new ArrayList<Login>();
         Gson gson = new Gson();
@@ -45,6 +50,9 @@ public class Server extends Observable {
         System.out.println(loginsDs);
     }
 
+    /**
+     * Initialize Items from JSON
+     */
     private void populateItems() {
         // init items from file
         itemsDs = new ArrayList<Item>();
@@ -66,8 +74,11 @@ public class Server extends Observable {
         System.out.println(itemsDs);
     }
 
+    /**
+     * Connect the socket and set up I/O
+     */
     private void SetupNetworking() {
-        final   int port = 5000;
+        final int port = 5000;
         try {
             ServerSocket ss = new ServerSocket(port, 100, InetAddress.getByName("0.0.0.0"));
             System.out.println("Server started at IP:" + ss.getInetAddress());
@@ -87,26 +98,31 @@ public class Server extends Observable {
         }
     }
 
+    /**
+     * This method updates the local data structure and sends it back to all the clients, also deals with concurrent bids
+     *
+     * @param obj - new ArrayList from a client
+     */
     public synchronized void processRequest(ArrayList<Item> obj) {
         boolean different = false;
-        for(int i = 0; i < itemsDs.size(); i++) {
-            if(itemsDs.get(i).getCurrentPrice() <=  obj.get(i).getCurrentPrice()) {
+        for (int i = 0; i < itemsDs.size(); i++) {
+            if (itemsDs.get(i).getCurrentPrice() <= obj.get(i).getCurrentPrice()) {
                 different = true;
             }
         }
-        if(different) {
+        if (different) {
             itemsDs = obj;
-            for(Item item : itemsDs) {
+            for (Item item : itemsDs) {
                 item.startTimer();
             }
             this.setChanged();
             this.notifyObservers(this.itemsDs);
-        }
-        else {
+        } else {
             System.out.println("Bid for the same price of an object was sent after another object sent, so bid was rejected");
         }
     }
 
+    // Assorted getters/setters
     public ArrayList<Item> getItemsDs() {
         return itemsDs;
     }

@@ -66,7 +66,7 @@ public class Item implements Serializable {
 
     // Server initialization called after GSON parsing
     public void init() {
-        this.currentPrice = this.minimumBid - 0.01;
+        this.currentPrice = this.minimumBid;
         this.sold = false;
         this.highestBidder = "NA";
     }
@@ -76,10 +76,9 @@ public class Item implements Serializable {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if(timeLeft > 0) {
+                if (timeLeft > 0) {
                     timeLeft--;
-                }
-                else {
+                } else {
                     setSold();
                 }
             }
@@ -132,7 +131,7 @@ public class Item implements Serializable {
         return timeLeft;
     }
 
-    public void setTimeLeft( int timeLeft) {
+    public void setTimeLeft(int timeLeft) {
         this.timeLeft = timeLeft;
     }
 
