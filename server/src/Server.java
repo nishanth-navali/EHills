@@ -7,6 +7,7 @@
  */
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -68,8 +69,8 @@ public class Server extends Observable {
     private void SetupNetworking() {
         final   int port = 5000;
         try {
-            ServerSocket ss = new ServerSocket(port);
-            System.out.println("Server started at IP:" + ss.getLocalSocketAddress());
+            ServerSocket ss = new ServerSocket(port, 100, InetAddress.getByName("0.0.0.0"));
+            System.out.println("Server started at IP:" + ss.getInetAddress());
             while (true) {
                 Socket clientSocket = ss.accept();
                 ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());

@@ -108,8 +108,6 @@ public class ItemGUI {
             String output = client.processBid(bidValue.getText(), item);
             Stage bidOutputStage = new Stage();
             bidOutputStage.getIcons().add(new Image(getClass().getResourceAsStream("images/hills.png")));
-//            bidOutputStage.setX(500);
-//            bidOutputStage.setY(500);
             BorderPane bidBP = new BorderPane();
             bidBP.setCenter(new Label(output));
             bidOutputStage.setScene(new Scene(bidBP, 320, 75));
@@ -122,8 +120,6 @@ public class ItemGUI {
             String output = client.processBuyNow(item);
             Stage buyOutputStage = new Stage();
             buyOutputStage.getIcons().add(new Image(getClass().getResourceAsStream("images/hills.png")));
-//            buyOutputStage.setX(500);
-////            buyOutputStage.setY(500);
             BorderPane buyBP = new BorderPane();
             buyBP.setCenter(new Label(output));
             buyOutputStage.setScene(new Scene(buyBP, 320, 75));
@@ -167,7 +163,18 @@ public class ItemGUI {
     public synchronized void updateLatestItemInformation() {
         // set all of the things that will change
         highestBidder.setText(item.getHighestBidder());
-        currentPrice.setText("$" + df.format(item.getCurrentPrice()));
-        bidValue.setText("$" + df.format(item.getCurrentPrice() + 0.01));
+        if(item.getCurrentPrice() >= item.getMinimumBid()) {
+            currentPrice.setText("$" + df.format(item.getCurrentPrice()));
+        }
+
+        double bidVal = item.getCurrentPrice() + item.getBuyNow()/10.0;
+        if(bidVal >= item.getBuyNow()) {
+            bidVal = item.getBuyNow() - 0.01;
+        }
+        else if(item.getCurrentPrice() < item.getMinimumBid())
+        {
+            bidVal = item.getMinimumBid();
+        }
+        bidValue.setText("$" + df.format(bidVal));
     }
 }

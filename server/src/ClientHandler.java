@@ -28,6 +28,7 @@ public class ClientHandler implements Runnable {
                         System.out.println("Received from client: " + obj);
                         if(obj instanceof Login) {
                             boolean send = false;
+                            ((Login) obj).decrypt();
                             for(Login currentLogin : server.getLogins()) {
                                 if(currentLogin.compareTo(obj) == 0) {
                                     send = true;

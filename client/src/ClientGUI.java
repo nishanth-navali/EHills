@@ -12,9 +12,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,10 +35,13 @@ public class ClientGUI extends Application {
     ObjectOutputStream toServer = null;
     ObjectInputStream fromServer = null;
     Socket socket = null;
+    static String IP_Address = "localhost";
 
     // JavaFX
     Scene itemsScene;
     ArrayList<ItemGUI> itemsDisplay = new ArrayList<>();
+    MediaPlayer startup = new MediaPlayer(new Media(new File("audio/StartupSound.mp3").toURI().toString()));
+    MediaPlayer badLogin = new MediaPlayer(new Media(new File("audio/BadLogin.mp3").toURI().toString()));
 
     // Decimal formatter
     DecimalFormat df = new DecimalFormat("0.00");
@@ -47,7 +53,7 @@ public class ClientGUI extends Application {
         int port = 5000;
         try {
             // connect via Socket
-            socket = new Socket("localhost", port);
+            socket = new Socket("54.86.146.46", port);
 
             // initialize Object I/O streams
             toServer = new ObjectOutputStream(socket.getOutputStream());
@@ -133,7 +139,7 @@ public class ClientGUI extends Application {
         // LOGIN BUTTON ACTION
         loginButton.setOnAction(event -> {
             // send to server
-            client.sendLogin(new Login(usernameTextField.getText(), passwordTextField.getText()));
+            client.sendLogin(new Login(usernameTextField.getText(), passwordTextField.getText()).encrypt());
             loginButton.setDisable(true);
             loginClearButton.setDisable(true);
             loginExitButton.setDisable(true);
@@ -146,6 +152,7 @@ public class ClientGUI extends Application {
                 itemTabsInit(itemsPane);
             } else {
                 loginTextArea.setText("Incorrect username/password: Please try again");
+                badLogin.play();
             }
             loginButton.setDisable(false);
             loginClearButton.setDisable(false);
@@ -251,6 +258,7 @@ public class ClientGUI extends Application {
     private void startClient(Stage primaryStage) {
         primaryStage.setScene(itemsScene);
         primaryStage.setTitle("EHills: " + client.getName());
+        startup.play();
     }
 
     /**
@@ -264,6 +272,9 @@ public class ClientGUI extends Application {
 
     // main
     public static void main(String[] args) {
+        if(args.length != 0) {
+            ClientGUI.IP_Address = args[0];
+        }
         launch(args);
     }
 }
